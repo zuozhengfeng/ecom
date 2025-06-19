@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: ecom
+  datasource:
+    driver - class - name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/ecom?serverTimezone=UTC&useSSL=false
+    username: ecom_wr
+    password: 1q2w3e4r5t!Q
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+mybatis:
+  configuration:
+    mapUnderscoreToCamelCase: true
+  mapper-locations: classpath:com/**/*.xml
+
+logging:
+  level:
+    com.yabobaozb.ecom.buyer.infra.repository: debug
+    com.yabobaozb.ecom.payment.adapter.local.mapper: debug
+
+    org.mybatis: debug
+    java.sql.Connection: debug
+    java.sql.Statement: debug
+    java.sql.PreparedStatement: debug

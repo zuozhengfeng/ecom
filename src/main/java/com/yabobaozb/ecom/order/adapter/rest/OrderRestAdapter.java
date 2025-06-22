@@ -7,12 +7,14 @@ import com.yabobaozb.ecom.order.domain.command.OrderCreateCommand;
 import com.yabobaozb.ecom.order.domain.service.OrderDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
 
-@RestController("/order")
+@RestController
+@RequestMapping("/order")
 public class OrderRestAdapter {
 
     private final OrderDomainService orderDomainService;

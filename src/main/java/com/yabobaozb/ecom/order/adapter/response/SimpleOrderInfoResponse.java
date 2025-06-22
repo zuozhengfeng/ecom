@@ -4,21 +4,14 @@ import com.yabobaozb.ecom.order.domain.OrderInfo;
 import lombok.Getter;
 
 
-public class SimpleOrderInfoResponse {
-
-    @Getter
-    private final long orderId;
+public record SimpleOrderInfoResponse(@Getter long orderId) {
 
     // 添加更多
-
-    public SimpleOrderInfoResponse(long orderId) {
-        this.orderId = orderId;
-    }
 
     public static class Converter {
 
         public static SimpleOrderInfoResponse convert(OrderInfo orderInfo) {
-            return new SimpleOrderInfoResponse( orderInfo.getOrderId() );
+            return new SimpleOrderInfoResponse(orderInfo.getOrderId());
         }
 
     }

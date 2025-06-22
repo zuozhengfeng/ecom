@@ -3,7 +3,7 @@ spring:
     name: ecom
   datasource:
     driver - class - name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ecom?serverTimezone=UTC&useSSL=false
+    url: jdbc:mysql://localhost:3306/ecom?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
     username: ecom_wr
     password: 1q2w3e4r5t!Q
     hikari:

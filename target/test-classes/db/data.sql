@@ -9,7 +9,9 @@ truncate table sku_info;
 truncate table sku_inventory;
 truncate table sku_inventory_record;
 truncate table payment_info;
-
+truncate table order_info;
+truncate table order_item;
+truncate table order_payment;
 
 -- 用户10000有余额记录，用户10001没有余额记录
 insert into buyer_info values (10000, 'user_10000', now(), now());

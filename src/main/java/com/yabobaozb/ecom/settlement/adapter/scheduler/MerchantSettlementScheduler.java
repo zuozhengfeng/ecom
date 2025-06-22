@@ -1,6 +1,5 @@
 package com.yabobaozb.ecom.settlement.adapter.scheduler;
 
-import com.google.common.collect.Lists;
 import com.yabobaozb.ecom.merchant.adapter.local.MerchantLocalAdapter;
 import com.yabobaozb.ecom.settlement.domain.command.SingleMerchantDailySettingCommand;
 import com.yabobaozb.ecom.settlement.domain.service.MerchantSettlementDomainService;
@@ -12,9 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 @Component
@@ -44,9 +41,13 @@ public class MerchantSettlementScheduler {
 
         // 简化，不作分页
         List<Long> merchantIds = merchantLocalAdapter.listAllValidMerchantIds();
+        final int totalCount = merchantIds.size();
+        int currentCount = 0;
 
         // 简化，串性执行
         for (Long merchantId : merchantIds) {
+            currentCount++;
+
             try {
                 SingleMerchantDailySettingCommand command = new SingleMerchantDailySettingCommand(merchantId, settleTime, beginAt, endAt, merchantSettlementDomainService);
                 command.execute();
@@ -54,6 +55,8 @@ public class MerchantSettlementScheduler {
                 logger.error("商户结算失败：{}", e.getMessage());
 
                 // TODO 可以增加其他记录
+            } finally {
+                logger.info( String.format("执行进度， %d / %d", currentCount, totalCount) );
             }
         }
 

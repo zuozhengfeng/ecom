@@ -119,4 +119,8 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where merchant_id = #{merchantId,jdbcType=BIGINT}
   </update>
+  <select id="selectAllMerchantIds" resultType="java.lang.Long">
+    select merchant_id
+    from merchant_info
+  </select>
 </mapper>

@@ -8,6 +8,7 @@ import com.yabobaozb.ecom.settlement.domain.MerchantDailySettlement;
 import com.yabobaozb.ecom.settlement.infra.repository.ISettlementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class MerchantSettlementDomainService {
         this.settlementRepository = settlementRepository;
     }
 
+    @Transactional
     // 执行按日结算
     public MerchantDailySettlement executeDailySettlement(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt) {
 
@@ -43,19 +45,28 @@ public class MerchantSettlementDomainService {
         // 结算结果
         // 1、均无记录直接返回空结算结果报告
         // 2、存在任意一类记录，比较双方的金额差异
+        MerchantDailySettlement oldMerchantDailySettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
+
         MerchantDailySettlement merchantDailySettlement;
         if ( orders.size() == 0 && merchantBalanceChanges.size() == 0 ) {
-            merchantDailySettlement = MerchantDailySettlement.buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt);
+            merchantDailySettlement = (null == oldMerchantDailySettlement) ?
+                MerchantDailySettlement.buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt) :
+                MerchantDailySettlement.buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt, oldMerchantDailySettlement.getVersion() );
         }
         else {
             // 订单的记录金额
-            BigDecimal orderAmount = orders.size()==0 ? BigDecimal.ZERO : orders.stream().map(OrderAmountInfoResponse::getTotalAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
+            BigDecimal orderAmount = orders.size()==0 ?
+                    BigDecimal.ZERO :
+                    orders.stream().map(OrderAmountInfoResponse::getTotalAmount).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
 
             // 商家收益的金额
-            BigDecimal merchantIncreaseAmount = merchantBalanceChanges.size()==0 ? BigDecimal.ZERO :
+            BigDecimal merchantIncreaseAmount = merchantBalanceChanges.size()==0 ?
+                    BigDecimal.ZERO :
                     merchantBalanceChanges.get(merchantBalanceChanges.size()-1).getBalanceTo().subtract(merchantBalanceChanges.get(0).getBalanceFrom());
 
-            merchantDailySettlement = MerchantDailySettlement.buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, merchantIncreaseAmount);
+            merchantDailySettlement = (null == oldMerchantDailySettlement) ?
+                MerchantDailySettlement.buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, merchantIncreaseAmount) :
+                MerchantDailySettlement.buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, merchantIncreaseAmount, oldMerchantDailySettlement.getVersion() );
         }
 
         // 存储

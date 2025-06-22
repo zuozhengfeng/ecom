@@ -4,14 +4,18 @@ import lombok.Getter;
 
 public enum SettlementResult {
 
-    MATCHED(1),
-    NOTMATCHED(2);
+    MATCHED(1, "结算正常"),
+    NOTMATCHED(2, "结算异常");
 
     @Getter
     private final int value;
 
-    SettlementResult(int value) {
+    @Getter
+    private final String desc;
+
+    SettlementResult(int value, String desc) {
         this.value = value;
+        this.desc = desc;
     }
 
     public static SettlementResult parseByValue(int value) {

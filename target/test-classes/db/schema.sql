@@ -149,4 +149,37 @@ CREATE TABLE IF NOT EXISTS  order_payment (
 );
 
 
+CREATE TABLE IF NOT EXISTS  settlement_info (
+                                   settle_id bigint NOT NULL,
+                                   merchant_id bigint NOT NULL,
+                                   settle_time char(10) NOT NULL,
+                                   begin_at char(19) NOT NULL,
+                                   end_at char(19) NOT NULL,
+                                   expect_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+                                   settle_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+                                   diff_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+                                   settle_result smallint NOT NULL,
+                                    remark varchar(200) DEFAULT NULL ,
+                                    version bigint NOT NULL,
+                                   create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                   update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                   PRIMARY KEY (settle_id)
+);
 
+CREATE TABLE IF NOT EXISTS  settlement_info_record (
+                                          record_id bigint NOT NULL,
+                                          settle_id bigint NOT NULL,
+                                          merchant_id bigint NOT NULL,
+                                          settle_time char(10) NOT NULL,
+                                          begin_at char(19) NOT NULL,
+                                          end_at char(19) NOT NULL,
+                                          expect_amount decimal(10,2) NOT NULL,
+                                          settle_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+                                          diff_amount decimal(10,2) NOT NULL DEFAULT '0.00',
+                                          settle_result smallint NOT NULL,
+                                          remark varchar(200) NOT NULL,
+                                          version bigint NOT NULL,
+                                          create_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                          update_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                          PRIMARY KEY (record_id)
+);

@@ -30,12 +30,18 @@ public class MerchantDailySettlement {
 
     private String remark;
 
-    public MerchantDailySettlement(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt) {
-        this(merchantId, settleTime, beginAt, endAt, BigDecimal.ZERO, BigDecimal.ZERO);
+    private final long version;
+
+    private final long newVersion;
+
+    private MerchantDailySettlementRecord settlementRecord;
+
+    private MerchantDailySettlement(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, long version) {
+        this(merchantId, settleTime, beginAt, endAt, BigDecimal.ZERO, BigDecimal.ZERO, version);
 
     }
 
-    public MerchantDailySettlement(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, BigDecimal expectAmount, BigDecimal settleAmount) {
+    private MerchantDailySettlement(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, BigDecimal expectAmount, BigDecimal settleAmount, long version) {
         this.merchantId = merchantId;
         this.settleTime = settleTime;
         this.beginAt = beginAt;
@@ -48,19 +54,50 @@ public class MerchantDailySettlement {
         this.remark = this.settleResult ==SettlementResult.MATCHED ? "结算正常" : String.format("预计结算%s元，实际结算%s元, 差异%s元", expectAmount, settleAmount, diffAmount);
 
         this.settleId = generateSettleId();
+        this.version = version;
+        this.newVersion = version + 1;
+    }
+
+    public MerchantDailySettlement(long settleId, long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, BigDecimal expectAmount, BigDecimal settleAmount, BigDecimal diffAmount, String remark, SettlementResult settleResult, long version) {
+        this.merchantId = merchantId;
+        this.settleTime = settleTime;
+        this.beginAt = beginAt;
+        this.endAt = endAt;
+        this.expectAmount = expectAmount;
+        this.settleAmount = settleAmount;
+        this.diffAmount = diffAmount;
+
+        this.settleResult = settleResult;
+        this.remark = remark;
+        this.settleId = settleId;
+        this.version = version;
+        this.newVersion = version + 1;
     }
 
     private long generateSettleId() {
         return IDGenerator.generateId();
     }
 
+    private void initSettlementRecord() {
+        this.settlementRecord = new MerchantDailySettlementRecord(this);
+    }
+
     public static MerchantDailySettlement buildEmptyRecordReport(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt) {
-        MerchantDailySettlement merchantDailySettlement = new MerchantDailySettlement(merchantId, settleTime, beginAt, endAt);
+        return buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt, -1);
+    }
+    public static MerchantDailySettlement buildEmptyRecordReport(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, long version) {
+        MerchantDailySettlement merchantDailySettlement = new MerchantDailySettlement(merchantId, settleTime, beginAt, endAt, version);
         merchantDailySettlement.remark = "结算正常；商家无订单数据";
+        merchantDailySettlement.initSettlementRecord();
         return merchantDailySettlement;
     }
 
     public static MerchantDailySettlement buildNormalRecordReport(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, BigDecimal orderAmount, BigDecimal settleAmount) {
-        return new MerchantDailySettlement(merchantId, settleTime, beginAt, endAt, orderAmount, settleAmount);
+        return buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, settleAmount, -1L);
+    }
+    public static MerchantDailySettlement buildNormalRecordReport(long merchantId, String settleTime, LocalDateTime beginAt, LocalDateTime endAt, BigDecimal orderAmount, BigDecimal settleAmount, long version) {
+        MerchantDailySettlement merchantDailySettlement = new MerchantDailySettlement(merchantId, settleTime, beginAt, endAt, orderAmount, settleAmount, version);
+        merchantDailySettlement.initSettlementRecord();
+        return merchantDailySettlement;
     }
 }

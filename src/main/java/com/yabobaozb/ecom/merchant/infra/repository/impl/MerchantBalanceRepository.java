@@ -15,7 +15,10 @@ import com.yabobaozb.ecom.merchant.infra.repository.IMerchantBalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MerchantBalanceRepository implements IMerchantBalanceRepository {
@@ -72,6 +75,25 @@ public class MerchantBalanceRepository implements IMerchantBalanceRepository {
         List<MerchantBalanceRecord> resultList = Lists.newArrayListWithExpectedSize(merchantBalanceRecordDOList.size());
         merchantBalanceRecordDOList.forEach( merchantBalanceRecordDO -> resultList.add(MerchantBalanceRecordConverter.convertToAggregate(merchantBalanceRecordDO)) );
         return resultList;
+    }
+
+    @Override
+    public List<Long> listAllValidMerchantIds() {
+        // TODO 后续需要考虑数据量过大的情况
+        return merchantInfoDOMapper.selectAllMerchantIds();
+    }
+
+    @Override
+    public List<MerchantBalanceRecord> selectByMerchantAndCreateTime(long merchantId, LocalDateTime ldtBeginAt, LocalDateTime ldtEndAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String beginAt = ldtBeginAt.format(formatter);
+        String endAt = ldtEndAt.format(formatter);
+
+        List<MerchantBalanceRecordDO> records = merchantBalanceRecordDOMapper.selectByMerchantAndCreateTime(merchantId, beginAt, endAt);
+        if ( records.size() == 0 ) {
+            return Lists.newArrayList();
+        }
+        return records.stream().map(MerchantBalanceRecordConverter::convertToAggregate).collect(Collectors.toList());
     }
 
     private void checkMerchantExisted(long merchantId) {

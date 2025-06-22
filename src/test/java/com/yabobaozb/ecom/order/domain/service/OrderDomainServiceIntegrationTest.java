@@ -2,7 +2,7 @@ package com.yabobaozb.ecom.order.domain.service;
 
 import com.yabobaozb.ecom.buyer.adapter.local.BuyerLocalAdapter;
 import com.yabobaozb.ecom.buyer.adapter.response.SimpleBuyerBalanceResponse;
-import com.yabobaozb.ecom.commodity.adapter.local.InventoryLocalAdapter;
+import com.yabobaozb.ecom.commodity.adapter.local.CommodityLocalAdapter;
 import com.yabobaozb.ecom.commodity.adapter.response.SimpleSkuInfoResponse;
 import com.yabobaozb.ecom.merchant.adapter.local.MerchantLocalAdapter;
 import com.yabobaozb.ecom.merchant.adapter.response.SimpleMerchantBalanceResponse;
@@ -37,16 +37,16 @@ public class OrderDomainServiceIntegrationTest {
 
     private final MerchantLocalAdapter merchantLocalAdapter;
 
-    private final InventoryLocalAdapter inventoryLocalAdapter;
+    private final CommodityLocalAdapter commodityLocalAdapter;
 
 
     @Autowired
-    public OrderDomainServiceIntegrationTest(OrderDomainService orderDomainService, OrderRepository orderRepository, BuyerLocalAdapter buyerLocalAdapter, MerchantLocalAdapter merchantLocalAdapter, InventoryLocalAdapter inventoryLocalAdapter) {
+    public OrderDomainServiceIntegrationTest(OrderDomainService orderDomainService, OrderRepository orderRepository, BuyerLocalAdapter buyerLocalAdapter, MerchantLocalAdapter merchantLocalAdapter, CommodityLocalAdapter commodityLocalAdapter) {
         this.orderDomainService = orderDomainService;
         this.orderRepository = orderRepository;
         this.buyerLocalAdapter = buyerLocalAdapter;
         this.merchantLocalAdapter = merchantLocalAdapter;
-        this.inventoryLocalAdapter = inventoryLocalAdapter;
+        this.commodityLocalAdapter = commodityLocalAdapter;
     }
 
     @BeforeEach
@@ -128,7 +128,7 @@ public class OrderDomainServiceIntegrationTest {
         assertEquals(0, merchantBalance.balance().compareTo(new BigDecimal("2303.55")));
 
         // 验证商品库存
-        Map<Long, SimpleSkuInfoResponse> inventories = inventoryLocalAdapter.listSkuInfos(merchantId, skuIds);
+        Map<Long, SimpleSkuInfoResponse> inventories = commodityLocalAdapter.listSkuInfos(merchantId, skuIds);
         SimpleSkuInfoResponse skuInfo0 = inventories.get(skuIds[0]);
         assertEquals(skuInfo0.getAvailableInventory(), 97);
         SimpleSkuInfoResponse skuInfo1 = inventories.get(skuIds[1]);

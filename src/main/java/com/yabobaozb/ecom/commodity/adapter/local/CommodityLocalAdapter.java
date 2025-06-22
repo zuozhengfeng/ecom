@@ -2,9 +2,7 @@ package com.yabobaozb.ecom.commodity.adapter.local;
 
 import com.google.common.collect.Maps;
 import com.yabobaozb.ecom.commodity.adapter.response.SimpleSkuInfoResponse;
-import com.yabobaozb.ecom.commodity.adapter.response.SimpleSkuInventoryResponse;
 import com.yabobaozb.ecom.commodity.domain.SkuInfo;
-import com.yabobaozb.ecom.commodity.domain.SkuInventory;
 import com.yabobaozb.ecom.commodity.domain.command.InventoryDecreaseCommand;
 import com.yabobaozb.ecom.commodity.domain.service.InventoryDomainService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class InventoryLocalAdapter {
+public class CommodityLocalAdapter {
 
     @Autowired
     private InventoryDomainService inventoryDomainService;

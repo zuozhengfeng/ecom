@@ -5,6 +5,7 @@ import com.yabobaozb.ecom.merchant.domain.enums.MerchantBalanceChangeType;
 import lombok.Getter;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 public class MerchantBalanceRecord {
@@ -27,7 +28,9 @@ public class MerchantBalanceRecord {
 
     private final String remark;
 
-    public MerchantBalanceRecord(long recordId, long merchantId, BigDecimal amount, BigDecimal balanceFrom, BigDecimal balanceTo, int changeType, long payId, long sourceOrderId, String remark) {
+    private LocalDateTime createTime;
+
+    public MerchantBalanceRecord(long recordId, long merchantId, BigDecimal amount, BigDecimal balanceFrom, BigDecimal balanceTo, int changeType, long payId, long sourceOrderId, String remark, LocalDateTime createTime) {
         this.recordId = recordId;
         this.merchantId = merchantId;
         this.amount = amount;
@@ -37,6 +40,7 @@ public class MerchantBalanceRecord {
         this.payId = payId;
         this.sourceOrderId = sourceOrderId;
         this.remark = remark;
+        this.createTime = createTime;
     }
 
     public MerchantBalanceRecord(long merchantId, BigDecimal amount, BigDecimal balanceFrom, BigDecimal balanceTo, MerchantBalanceChangeType changeType, long payId, long sourceOrderId, String remark) {

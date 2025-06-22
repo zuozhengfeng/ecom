@@ -208,4 +208,13 @@
     from merchant_balance_record
     where merchant_id = #{merchantId,jdbcType=BIGINT}
   </select>
+
+  <select id="selectByMerchantAndCreateTime" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from merchant_balance_record
+    where merchant_id = #{merchantId,jdbcType=BIGINT}
+      AND create_time <![CDATA[ >= ]] #{beginAt,jdbcType=TIMESTAMP}
+      AND create_time <![CDATA[ < ]]> #{endAt,jdbcType=TIMESTAMP}
+  </select>
 </mapper>

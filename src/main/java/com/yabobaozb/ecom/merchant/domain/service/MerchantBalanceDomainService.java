@@ -1,13 +1,17 @@
 package com.yabobaozb.ecom.merchant.domain.service;
 
 import com.yabobaozb.ecom.merchant.domain.MerchantBalance;
+import com.yabobaozb.ecom.merchant.domain.MerchantBalanceRecord;
 import com.yabobaozb.ecom.merchant.domain.enums.MerchantBalanceChangeType;
+import com.yabobaozb.ecom.merchant.infra.model.MerchantBalanceRecordDO;
 import com.yabobaozb.ecom.merchant.infra.repository.IMerchantBalanceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class MerchantBalanceDomainService {
@@ -46,5 +50,13 @@ public class MerchantBalanceDomainService {
 
     public MerchantBalance getMerchantBalance(long merchantId) {
         return merchantBalanceRepository.getByMerchantId(merchantId);
+    }
+
+    public List<Long> listAllValidMerchantIds() {
+        return merchantBalanceRepository.listAllValidMerchantIds();
+    }
+
+    public List<MerchantBalanceRecord> listBalanceChangesByMerchantId(long merchantId, LocalDateTime beginAt, LocalDateTime endAt) {
+        return merchantBalanceRepository.selectByMerchantAndCreateTime(merchantId, beginAt, endAt);
     }
 }

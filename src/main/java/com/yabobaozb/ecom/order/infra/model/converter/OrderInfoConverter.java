@@ -3,6 +3,9 @@ package com.yabobaozb.ecom.order.infra.model.converter;
 import com.yabobaozb.ecom.order.domain.OrderInfo;
 import com.yabobaozb.ecom.order.infra.model.OrderInfoDO;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
 public final class OrderInfoConverter {
 
     public static OrderInfoDO convertToDO(OrderInfo orderInfo) {
@@ -28,6 +31,10 @@ public final class OrderInfoConverter {
     }
 
     public static OrderInfo convertToAggregate(OrderInfoDO orderInfoDO) {
-        return new OrderInfo( orderInfoDO.getBuyerId(), orderInfoDO.getMerchantId(), orderInfoDO.getAmountPaid() );
+        LocalDateTime createTime = orderInfoDO.getCreateTime().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        return new OrderInfo( orderInfoDO.getOrderId(), orderInfoDO.getBuyerId(), orderInfoDO.getMerchantId(), orderInfoDO.getAmountPaid(), createTime );
     }
 }

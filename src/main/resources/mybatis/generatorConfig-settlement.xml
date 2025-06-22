@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-configuration_1_0.dtd">
+<generatorConfiguration>
+
+
+    <context id="settlement" targetRuntime="MyBatis3">
+        <property name="javaFileEncoding" value="UTF-8"/>
+        <property name="autoDelimitKeywords" value="true"/>
+        <property name="beginningDelimiter" value="`"/>
+        <property name="endingDelimiter" value="`"/>
+
+        <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/ecom"
+                        userId="ecom_wr"
+                        password="1q2w3e4r5t!Q">
+        </jdbcConnection>
+        <javaModelGenerator targetPackage="com.yabobaozb.ecom.settlement.infra.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <sqlMapGenerator targetPackage="com.yabobaozb.ecom.settlement.infra.mapper"
+                         targetProject="src/main/resources">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <javaClientGenerator type="XMLMAPPER"
+                             targetPackage="com.yabobaozb.ecom.settlement.infra.mapper"
+                             targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <table tableName="settlement_info" domainObjectName="SettlementInfoDO"
+               enableSelectByExample="false"
+               enableDeleteByExample="false"
+               enableCountByExample="false"
+               enableUpdateByExample="false" >
+        </table>
+    </context>
+
+
+</generatorConfiguration>

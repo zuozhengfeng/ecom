@@ -17,8 +17,11 @@ import com.yabobaozb.ecom.order.infra.repository.IOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderRepository implements IOrderRepository {
@@ -87,6 +90,19 @@ public class OrderRepository implements IOrderRepository {
             orderPaymentDOMapper.insertSelective( OrderPaymentConverter.convertToDO(orderPayment) );
         }
 
+    }
+
+    @Override
+    public List<OrderInfo> listByMerchantAndCreateTime(long merchantId, LocalDateTime ldtBeginAt, LocalDateTime ldtEndAt) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String beginAt = ldtBeginAt.format(formatter);
+        String endAt = ldtEndAt.format(formatter);
+
+        List<OrderInfoDO> orderInfos = orderInfoDOMapper.listByMerchantAndCreateTime(merchantId, beginAt, endAt);
+        if ( orderInfos.size() == 0 ) {
+            return Lists.newArrayList();
+        }
+        return orderInfos.stream().map(OrderInfoConverter::convertToAggregate).collect(Collectors.toList());
     }
 
 

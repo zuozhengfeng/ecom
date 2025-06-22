@@ -2,7 +2,7 @@ package com.yabobaozb.ecom.order.infra.repository;
 
 import com.yabobaozb.ecom.buyer.adapter.local.BuyerLocalAdapter;
 import com.yabobaozb.ecom.buyer.adapter.response.SimpleBuyerBalanceResponse;
-import com.yabobaozb.ecom.commodity.adapter.local.InventoryLocalAdapter;
+import com.yabobaozb.ecom.commodity.adapter.local.CommodityLocalAdapter;
 import com.yabobaozb.ecom.commodity.adapter.response.SimpleSkuInfoResponse;
 import com.yabobaozb.ecom.order.domain.OrderInfo;
 import org.junit.jupiter.api.Test;
@@ -24,12 +24,12 @@ public class OrderRepositoryIntegrationTest {
 
     private final BuyerLocalAdapter buyerLocalAdapter;
 
-    private final InventoryLocalAdapter inventoryLocalAdapter;
+    private final CommodityLocalAdapter commodityLocalAdapter;
 
-    public OrderRepositoryIntegrationTest(IOrderRepository orderRepository, BuyerLocalAdapter buyerLocalAdapter, InventoryLocalAdapter inventoryLocalAdapter) {
+    public OrderRepositoryIntegrationTest(IOrderRepository orderRepository, BuyerLocalAdapter buyerLocalAdapter, CommodityLocalAdapter commodityLocalAdapter) {
         this.orderRepository = orderRepository;
         this.buyerLocalAdapter = buyerLocalAdapter;
-        this.inventoryLocalAdapter = inventoryLocalAdapter;
+        this.commodityLocalAdapter = commodityLocalAdapter;
     }
 
     @Test
@@ -45,7 +45,7 @@ public class OrderRepositoryIntegrationTest {
         String remark = "test order";
 
         SimpleBuyerBalanceResponse buyerBalance = buyerLocalAdapter.getByBuyerId(buyerId);
-        Map<Long, SimpleSkuInfoResponse> skuInventories = inventoryLocalAdapter.listSkuInfos(merchantId, skuIds);
+        Map<Long, SimpleSkuInfoResponse> skuInventories = commodityLocalAdapter.listSkuInfos(merchantId, skuIds);
 
         int skuSize = skuIds.length;
         int totalQuantity = Arrays.stream(quantities).sum();
@@ -85,7 +85,7 @@ public class OrderRepositoryIntegrationTest {
         String remark = "test order";
 
         SimpleBuyerBalanceResponse buyerBalance = buyerLocalAdapter.getByBuyerId(buyerId);
-        Map<Long, SimpleSkuInfoResponse> skuInventories = inventoryLocalAdapter.listSkuInfos(merchantId, skuIds);
+        Map<Long, SimpleSkuInfoResponse> skuInventories = commodityLocalAdapter.listSkuInfos(merchantId, skuIds);
 
         int skuSize = skuIds.length;
         int totalQuantity = Arrays.stream(quantities).sum();

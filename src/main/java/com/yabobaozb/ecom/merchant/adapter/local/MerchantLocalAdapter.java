@@ -1,6 +1,9 @@
 package com.yabobaozb.ecom.merchant.adapter.local;
 
+import com.google.common.collect.Lists;
+import com.yabobaozb.ecom.merchant.adapter.response.MerchantBalanceChangeResponse;
 import com.yabobaozb.ecom.merchant.adapter.response.SimpleMerchantBalanceResponse;
+import com.yabobaozb.ecom.merchant.domain.MerchantBalanceRecord;
 import com.yabobaozb.ecom.merchant.domain.command.MerchantBlanaceDecreaseCommand;
 import com.yabobaozb.ecom.merchant.domain.command.MerchantBlanaceIncreaseCommand;
 import com.yabobaozb.ecom.merchant.domain.service.MerchantBalanceDomainService;
@@ -8,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class MerchantLocalAdapter {
@@ -33,4 +39,15 @@ public class MerchantLocalAdapter {
         command.execute();
     }
 
+    public List<Long> listAllValidMerchantIds() {
+        return merchantBalanceDomainService.listAllValidMerchantIds();
+    }
+
+    public List<MerchantBalanceChangeResponse> listBalanceChangesByMerchantId(long merchantId, LocalDateTime beginAt, LocalDateTime endAt) {
+        List<MerchantBalanceRecord> records = merchantBalanceDomainService.listBalanceChangesByMerchantId(merchantId, beginAt, endAt);
+        if ( records.size() == 0 ) {
+            return Lists.newArrayList();
+        }
+        return records.stream().map(MerchantBalanceChangeResponse.Converter::convertToResponse).collect(Collectors.toList());
+    }
 }

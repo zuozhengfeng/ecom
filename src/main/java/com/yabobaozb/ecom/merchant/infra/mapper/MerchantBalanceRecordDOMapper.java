@@ -1,6 +1,7 @@
 package com.yabobaozb.ecom.merchant.infra.mapper;
 
 import com.yabobaozb.ecom.merchant.infra.model.MerchantBalanceRecordDO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -54,4 +55,6 @@ public interface MerchantBalanceRecordDOMapper {
     int updateByPrimaryKey(MerchantBalanceRecordDO record);
 
     List<MerchantBalanceRecordDO> selectByMerchantId(long merchantId);
+
+    List<MerchantBalanceRecordDO> selectByMerchantAndCreateTime(@Param("merchantId") long merchantId, @Param("beginAt") String beginAt, @Param("endAt") String endAt);
 }

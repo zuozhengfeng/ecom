@@ -8,8 +8,10 @@ import com.yabobaozb.ecom.order.infra.enums.OrderStatus;
 import com.yabobaozb.ecom.order.infra.enums.PayResult;
 import com.yabobaozb.ecom.payment.infra.enums.PayType;
 import lombok.Getter;
+import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -60,10 +62,15 @@ public class OrderInfo {
     @Getter
     private List<OrderPayment> orderPayments;
 
-    public OrderInfo( long buyerId, long merchantId, BigDecimal totalAmount ) {
+    @Getter
+    private LocalDateTime createTime;
+
+    public OrderInfo(long orderId, long buyerId, long merchantId, BigDecimal totalAmount, LocalDateTime createTime ) {
+        this.orderId = orderId;
         this.buyerId = buyerId;
         this.merchantId = merchantId;
         this.totalAmount = totalAmount;
+        this.createTime = createTime;
     }
 
     public OrderInfo(long buyerId, long merchantId, long[] skuIds, int[] quantities, BigDecimal[] unitPrices, String remark, SimpleBuyerBalanceResponse buyerBalance, Map<Long, SimpleSkuInfoResponse> skuInventories) {

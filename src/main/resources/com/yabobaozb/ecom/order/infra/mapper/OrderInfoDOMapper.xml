@@ -214,4 +214,12 @@
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
+  <select id="listByMerchantAndCreateTime"  resultType="com.yabobaozb.ecom.order.infra.model.OrderInfoDO">
+    select
+    <include refid="Base_Column_List" />
+    from order_info
+    where merchant_id = #{merchantId,jdbcType=BIGINT}
+      AND create_time <![CDATA[ >= ]] #{beginAt,jdbcType=TIMESTAMP}
+      AND create_time <![CDATA[ < ]]> #{endAt,jdbcType=TIMESTAMP}
+  </select>
 </mapper>

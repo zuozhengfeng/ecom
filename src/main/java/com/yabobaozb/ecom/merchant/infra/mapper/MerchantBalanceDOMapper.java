@@ -52,5 +52,5 @@ public interface MerchantBalanceDOMapper {
      */
     int updateByPrimaryKey(MerchantBalanceDO record);
 
-    void updateBalanceByVersion(MerchantBalanceVersionDO record);
+    int updateBalanceByVersion(MerchantBalanceVersionDO record);
 }

@@ -30,17 +30,24 @@ public class BuyerBalanceRepository implements IBuyerBalanceRepository {
         // 用户必须存在
         checkBuyerExisted(buyerBalance.getBuyerId());
 
+        int executeCount;
+
         // 更改余额
         if ( buyerBalance.getVersion() == -1 ) {
-            buyerBalanceDOMapper.insertSelective(BuyerBalanceConverter.convertToDO(buyerBalance));
+            executeCount = buyerBalanceDOMapper.insertSelective(BuyerBalanceConverter.convertToDO(buyerBalance));
         }
         else {
-            buyerBalanceDOMapper.updateBalanceByVersion(BuyerBalanceConverter.convertToVersionDO(buyerBalance));
+            executeCount = buyerBalanceDOMapper.updateBalanceByVersion(BuyerBalanceConverter.convertToVersionDO(buyerBalance));
+        }
+        if ( executeCount != 1 ) {
+            throw new RuntimeException("更新余额失败");
         }
 
         // 增加变动记录
-        buyerBalanceRecordDOMapper.insertSelective(BuyerBalanceRecordConverter.convertToDO(buyerBalance.getRecord()));
-
+        executeCount = buyerBalanceRecordDOMapper.insertSelective(BuyerBalanceRecordConverter.convertToDO(buyerBalance.getRecord()));
+        if ( executeCount != 1 ) {
+            throw new RuntimeException("更新余额失败");
+        }
     }
 
     @Override

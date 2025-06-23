@@ -54,15 +54,24 @@ public class SkuRepository implements ISkuRepository {
         // 商品必须存在
         checkSkuExisted(skuInventory.getSkuId());
 
+        int executeCount;
+
+        // 更新库存
         if ( skuInventory.getVersion() == -1 ) {
-            skuInventoryDOMapper.insertSelective(SkuInventoryConverter.convertToDO(skuInventory));
+            executeCount = skuInventoryDOMapper.insertSelective(SkuInventoryConverter.convertToDO(skuInventory));
         }
         else {
-            skuInventoryDOMapper.updateInventoryByVersion(SkuInventoryConverter.convertToVersionDO(skuInventory));
+            executeCount = skuInventoryDOMapper.updateInventoryByVersion(SkuInventoryConverter.convertToVersionDO(skuInventory));
+        }
+        if ( executeCount <= 0 ) {
+            throw new RuntimeException("更新商品库存失败");
         }
 
         // 增加变动记录
-        skuInventoryRecordDOMapper.insertSelective(SkuInventoryRecordConverter.convertToDO(skuInventory.getRecord()));
+        executeCount = skuInventoryRecordDOMapper.insertSelective(SkuInventoryRecordConverter.convertToDO(skuInventory.getRecord()));
+        if ( executeCount <= 0 ) {
+            throw new RuntimeException("更新商品库存失败");
+        }
     }
 
     @Override

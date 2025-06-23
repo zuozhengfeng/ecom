@@ -39,16 +39,24 @@ public class MerchantBalanceRepository implements IMerchantBalanceRepository {
         // 商户必须存在
         checkMerchantExisted(merchantBalance.getMerchantId());
 
+        int executeCount;
+
         // 更改余额
         if ( merchantBalance.getVersion() == -1 ) {
-            merchantBalanceDOMapper.insertSelective(MerchantBalanceConverter.convertToDO(merchantBalance));
+            executeCount = merchantBalanceDOMapper.insertSelective(MerchantBalanceConverter.convertToDO(merchantBalance));
         }
         else {
-            merchantBalanceDOMapper.updateBalanceByVersion(MerchantBalanceConverter.convertToVersionDO(merchantBalance));
+            executeCount = merchantBalanceDOMapper.updateBalanceByVersion(MerchantBalanceConverter.convertToVersionDO(merchantBalance));
+        }
+        if ( executeCount <= 0 ) {
+            throw new RuntimeException("更新商家余额失败");
         }
 
         // 增加变动记录
-        merchantBalanceRecordDOMapper.insertSelective(MerchantBalanceRecordConverter.convertToDO(merchantBalance.getRecord()));
+        executeCount = merchantBalanceRecordDOMapper.insertSelective(MerchantBalanceRecordConverter.convertToDO(merchantBalance.getRecord()));
+        if ( executeCount <= 0 ) {
+            throw new RuntimeException("更新商家余额失败");
+        }
 
     }
 

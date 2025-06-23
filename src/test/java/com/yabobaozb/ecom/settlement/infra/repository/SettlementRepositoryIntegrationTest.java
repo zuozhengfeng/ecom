@@ -64,4 +64,38 @@ public class SettlementRepositoryIntegrationTest {
         assertEquals(settlement.getSettleId(), record.getSettleId());
 
     }
+
+
+    @Test
+    public void testSaveSettlement_Normal_Twice_Version() {
+        LocalDateTime endAt = LocalDateTime.now().withHour(0).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime beginAt = endAt.minusDays(1);
+        String settleTime = beginAt.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        long merchantId = 20000L;
+
+        // 执行第1次保存操作
+        MerchantDailySettlement settlement =
+                MerchantDailySettlement.buildNormalRecordReport(
+                        merchantId, settleTime, beginAt, endAt, BigDecimal.valueOf(100), BigDecimal.valueOf(100));
+        settlementRepository.saveSettlement(settlement);
+        MerchantDailySettlement savedSettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
+        assertNotNull(savedSettlement);
+        assertEquals(settlement.getMerchantId(), savedSettlement.getMerchantId());
+        assertEquals(settlement.getSettleTime(), savedSettlement.getSettleTime());
+        assertEquals(settlement.getNewVersion(), savedSettlement.getVersion());
+        assertEquals(0L, savedSettlement.getVersion());
+
+
+        // 执行第2次保存操作
+        settlement = MerchantDailySettlement.buildNormalRecordReport(
+                        merchantId, settleTime, beginAt, endAt, BigDecimal.valueOf(100), BigDecimal.valueOf(100), savedSettlement.getSettleId(), savedSettlement.getVersion());
+        settlementRepository.saveSettlement(settlement);
+        savedSettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
+        assertNotNull(savedSettlement);
+        assertEquals(settlement.getMerchantId(), savedSettlement.getMerchantId());
+        assertEquals(settlement.getSettleTime(), savedSettlement.getSettleTime());
+        assertEquals(settlement.getNewVersion(), savedSettlement.getVersion());
+        assertEquals(1L, savedSettlement.getVersion());
+    }
 }

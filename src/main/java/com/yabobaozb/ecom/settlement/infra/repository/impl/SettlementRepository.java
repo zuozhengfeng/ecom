@@ -28,13 +28,20 @@ public class SettlementRepository implements ISettlementRepository {
     }
     @Override
     public void saveSettlement(MerchantDailySettlement merchantDailySettlement) {
+        int executeCount;
         if ( -1 == merchantDailySettlement.getVersion() ) {
-            settlementInfoDOMapper.insertSelective(SettlementInfoConverter.convertToDO(merchantDailySettlement));
+            executeCount = settlementInfoDOMapper.insertSelective(SettlementInfoConverter.convertToDO(merchantDailySettlement));
         }
         else {
-            settlementInfoDOMapper.updateByVersion(SettlementInfoConverter.convertToVersionDO(merchantDailySettlement));
+            executeCount = settlementInfoDOMapper.updateByVersion(SettlementInfoConverter.convertToVersionDO(merchantDailySettlement));
         }
-        settlementInfoRecordDOMapper.insertSelective(SettlementInfoRecordConverter.convertToDO(merchantDailySettlement.getSettlementRecord()));
+        if ( executeCount <= 0 ) {
+            throw new RuntimeException("商户结算记录更新失败");
+        }
+        executeCount = settlementInfoRecordDOMapper.insertSelective(SettlementInfoRecordConverter.convertToDO(merchantDailySettlement.getSettlementRecord()));
+        if ( executeCount <= 0 ) {
+            throw new RuntimeException("商户结算记录更新失败");
+        }
     }
 
     @Override

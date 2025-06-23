@@ -57,5 +57,5 @@ public interface SettlementInfoDOMapper {
 
     List<SettlementInfoDO> selectByMerchantAndSettleTime(@Param("merchantId") long merchantId, @Param("settleTime") String settleTime);
 
-    void updateByVersion(SettlementInfoVersionDO record);
+    int updateByVersion(SettlementInfoVersionDO record);
 }

@@ -3,7 +3,7 @@ spring:
     name: ecom
   datasource:
     driver - class - name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ecom?serverTimezone=UTC&useSSL=false
+    url: jdbc:mysql://localhost:3306/ecom?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=false
     username: ecom_wr
     password: 1q2w3e4r5t!Q
     hikari:
@@ -19,8 +19,15 @@ logging:
   level:
     com.yabobaozb.ecom.buyer.infra.repository: debug
     com.yabobaozb.ecom.payment.adapter.local.mapper: debug
+    com.yabobaozb.ecom.settlement.infra.mapper: debug
 
     org.mybatis: debug
     java.sql.Connection: debug
     java.sql.Statement: debug
     java.sql.PreparedStatement: debug
+
+management:
+  endpoint:
+    health:
+      show-details: always
+

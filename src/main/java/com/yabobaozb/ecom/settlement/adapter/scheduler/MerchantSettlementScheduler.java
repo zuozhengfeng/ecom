@@ -31,6 +31,7 @@ public class MerchantSettlementScheduler {
 
     /** 每日结算 */
     @Scheduled(cron = "0 0 2 * * ?")
+//    @Scheduled(fixedRate = 60000L)
     public void runDailySettlement() {
 
         // 初始化结算日期
@@ -49,6 +50,7 @@ public class MerchantSettlementScheduler {
             currentCount++;
 
             try {
+                logger.info( String.format("开始执行商户结算：%d", merchantId) );
                 SingleMerchantDailySettingCommand command = new SingleMerchantDailySettingCommand(merchantId, settleTime, beginAt, endAt, merchantSettlementDomainService);
                 command.execute();
             } catch (Exception e) {
@@ -56,6 +58,7 @@ public class MerchantSettlementScheduler {
 
                 // TODO 可以增加其他记录
             } finally {
+                logger.info( String.format("完成执行商户结算：%d", merchantId) );
                 logger.info( String.format("执行进度， %d / %d", currentCount, totalCount) );
             }
         }

@@ -1,6 +1,5 @@
 package com.yabobaozb.ecom.settlement.adapter.rest;
 
-import com.google.common.collect.Range;
 import com.yabobaozb.ecom.common.ReturnResult;
 import com.yabobaozb.ecom.settlement.adapter.response.MerchantDailySettlementResponse;
 import com.yabobaozb.ecom.settlement.domain.MerchantDailySettlement;
@@ -24,6 +23,7 @@ public class MerchantSettlementRestAdapter {
         this.merchantSettlementDomainService = merchantSettlementDomainService;
     }
 
+    // 按日结算Rest接口方便随时结算，内部有版本快照记录
     @PostMapping("/daily")
     public ReturnResult<MerchantDailySettlementResponse> dailySettlement(@RequestParam("merchantId") long merchantId,
                                                                          @RequestParam("settleTime") String settleTime) {

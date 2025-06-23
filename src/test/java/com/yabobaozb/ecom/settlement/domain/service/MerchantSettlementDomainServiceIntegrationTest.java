@@ -113,14 +113,18 @@ public class MerchantSettlementDomainServiceIntegrationTest {
         String settleTime = formatSettlementTime(begAt);
 
         // 执行2次
-        merchantSettlementDomainService.executeDailySettlement(merchantId, settleTime, begAt, endAt);
+        MerchantDailySettlement settlement = merchantSettlementDomainService.executeDailySettlement(merchantId, settleTime, begAt, endAt);
+        MerchantDailySettlement savedSettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
+        assertNotNull(savedSettlement);
+        assertEquals(savedSettlement.getVersion(), settlement.getNewVersion());
+
 //        try {
 //            Thread.sleep(1000L);
 //        } catch (InterruptedException e) {
 //        }
-        MerchantDailySettlement settlement = merchantSettlementDomainService.executeDailySettlement(merchantId, settleTime, begAt, endAt);
+        settlement = merchantSettlementDomainService.executeDailySettlement(merchantId, settleTime, begAt, endAt);
 
-        MerchantDailySettlement savedSettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
+        savedSettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
         assertNotNull(savedSettlement);
         assertEquals(savedSettlement.getVersion(), settlement.getNewVersion());
         assertEquals(savedSettlement.getSettleTime(), settleTime);

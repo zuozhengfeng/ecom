@@ -51,7 +51,7 @@ public class MerchantSettlementDomainService {
         if ( orders.size() == 0 && merchantBalanceChanges.size() == 0 ) {
             merchantDailySettlement = (null == oldMerchantDailySettlement) ?
                 MerchantDailySettlement.buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt) :
-                MerchantDailySettlement.buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt, oldMerchantDailySettlement.getVersion() );
+                MerchantDailySettlement.buildEmptyRecordReport(merchantId, settleTime, beginAt, endAt, oldMerchantDailySettlement.getSettleId(), oldMerchantDailySettlement.getVersion() );
         }
         else {
             // 订单的记录金额
@@ -66,7 +66,7 @@ public class MerchantSettlementDomainService {
 
             merchantDailySettlement = (null == oldMerchantDailySettlement) ?
                 MerchantDailySettlement.buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, merchantIncreaseAmount) :
-                MerchantDailySettlement.buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, merchantIncreaseAmount, oldMerchantDailySettlement.getVersion() );
+                MerchantDailySettlement.buildNormalRecordReport(merchantId, settleTime, beginAt, endAt, orderAmount, merchantIncreaseAmount,  oldMerchantDailySettlement.getSettleId(), oldMerchantDailySettlement.getVersion() );
         }
 
         // 存储

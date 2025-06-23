@@ -3,8 +3,10 @@ package com.yabobaozb.ecom.settlement.adapter.rest;
 
 import com.yabobaozb.ecom.order.domain.service.OrderDomainService;
 import com.yabobaozb.ecom.settlement.domain.MerchantDailySettlement;
+import com.yabobaozb.ecom.settlement.domain.MerchantDailySettlementRecord;
 import com.yabobaozb.ecom.settlement.infra.repository.ISettlementRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,23 +34,25 @@ public class MerchantSettlementRestAdapterIntegrationTest {
     @Autowired
     private OrderDomainService orderDomainService;
 
+
+
+
+    private final long merchantId = 20000L;
+
     @BeforeEach
     void setUp() {
         String baseUrl = "/settlement";
         webTestClient = WebTestClient.bindToServer()
                 .baseUrl("http://localhost:" + port + baseUrl)
                 .build();
-    }
-
-
-    private final long merchantId = 20000L;
-
-    @Test
-    void testRecharge_normal() {
-        String settleTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
         prepareNormal();
 
+    }
+
+    @Test
+    void testDailySettlement_normal() {
+        String settleTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         webTestClient.post()
                 .uri("/daily?merchantId="+merchantId+"&settleTime="+settleTime)
                 .exchange()
@@ -62,12 +66,43 @@ public class MerchantSettlementRestAdapterIntegrationTest {
                 .jsonPath("$.data.diffAmount").isEqualTo("0.0")
                 .jsonPath("$.data.settleResult").isEqualTo("结算正常");
 
-
-
         // 验证数据库中的余额是否已更新
         MerchantDailySettlement merchantDailySettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
         assertNotNull(merchantDailySettlement);
         assertEquals( 0,new BigDecimal("3409.47").compareTo(merchantDailySettlement.getSettleAmount()));
+    }
+
+
+    // 失败，因为每次都需要创建新的订单
+    @RepeatedTest(3)
+    void testDailySettlement_normal_repeat() {
+        testDailySettlement_normal();
+    }
+
+    @Test
+    void testDailySettlement_normal_repeat_ok() {
+        for ( int i=0; i<3; i++) {
+            testDailySettlement_normal();
+
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String settleTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        MerchantDailySettlement merchantDailySettlement = settlementRepository.getByMerchantAndSettleTime(merchantId, settleTime);
+        assertNotNull(merchantDailySettlement);
+        assertEquals( 0,new BigDecimal("3409.47").compareTo(merchantDailySettlement.getSettleAmount()));
+        assertEquals( 0,new BigDecimal("0.0").compareTo(merchantDailySettlement.getDiffAmount()));
+        assertEquals(2, merchantDailySettlement.getVersion());
+
+        MerchantDailySettlementRecord record = settlementRepository.getRecentRecordByMerchantAndSettleTime(merchantId, settleTime);
+        assertNotNull(merchantDailySettlement);
+        assertEquals( 0,new BigDecimal("3409.47").compareTo(record.getSettleAmount()));
+        assertEquals( 0,new BigDecimal("0.0").compareTo(record.getDiffAmount()));
+        assertEquals(2, record.getVersion());
     }
 
     private void prepareNormal() {

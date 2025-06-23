@@ -11,6 +11,8 @@ public class MerchantDailySettlementResponse {
     @Getter
     private final long settleId;
     @Getter
+    private final long recordId;
+    @Getter
     private final long merchantId;
     @Getter
     private final String settleTime;
@@ -25,8 +27,9 @@ public class MerchantDailySettlementResponse {
     @Getter
     private final String settleResult;
 
-    public MerchantDailySettlementResponse(long settleId, long merchantId, String settleTime, BigDecimal expectAmount, BigDecimal settleAmount, BigDecimal diffAmount, String remark, SettlementResult settleResult) {
+    public MerchantDailySettlementResponse(long settleId, long recordId, long merchantId, String settleTime, BigDecimal expectAmount, BigDecimal settleAmount, BigDecimal diffAmount, String remark, SettlementResult settleResult) {
         this.settleId = settleId;
+        this.recordId = recordId;
         this.merchantId = merchantId;
         this.settleTime = settleTime;
         this.expectAmount = expectAmount;
@@ -38,7 +41,7 @@ public class MerchantDailySettlementResponse {
 
     public static class Converter {
         public static MerchantDailySettlementResponse convert(MerchantDailySettlement settlement) {
-            return new MerchantDailySettlementResponse(settlement.getSettleId(), settlement.getMerchantId(), settlement.getSettleTime(), settlement.getExpectAmount(), settlement.getSettleAmount(), settlement.getDiffAmount(), settlement.getRemark(), settlement.getSettleResult());
+            return new MerchantDailySettlementResponse(settlement.getSettleId(), settlement.getRecordId(), settlement.getMerchantId(), settlement.getSettleTime(), settlement.getExpectAmount(), settlement.getSettleAmount(), settlement.getDiffAmount(), settlement.getRemark(), settlement.getSettleResult());
         }
     }
 
